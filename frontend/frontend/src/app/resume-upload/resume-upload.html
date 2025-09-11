@@ -1,0 +1,49 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h2>Resume Upload</h2>
+
+  <div style="display:flex; gap:12px; margin-bottom:12px;">
+    <input type="text" placeholder="Candidate name" [(ngModel)]="candidateName" />
+    <select [(ngModel)]="selectedJobId">
+      <option value="">Select job (optional)</option>
+      <option *ngFor="let j of jobs" [value]="j._id">{{ j.title }}</option>
+    </select>
+  </div>
+
+  <div class="upload-box"
+       (drop)="onDrop($event)"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       [class.dragover]="isDragOver">
+    <p>Drag & Drop your resume here or click to select file</p>
+    <input type="file" (change)="onFileSelected($event)" hidden #fileInput />
+    <button (click)="fileInput.click()">Select File</button>
+  </div>
+
+  <div *ngIf="selectedFile" style="margin-top:8px;">
+    <p>Selected file: {{ selectedFile.name }}</p>
+  </div>
+
+  <div style="margin-top:12px;">
+    <button (click)="uploadResume()" [disabled]="!selectedFile">Upload Resume</button>
+    <button (click)="getAiScore()" [disabled]="!uploadedResumeId">AI Score</button>
+  </div>
+
+  <div *ngIf="aiResult" style="margin-top:18px;">
+    <h3>Candidate Summary</h3>
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr><th>Candidate</th><th>Skill</th><th>Score</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let skill of aiResult.skills">
+          <td>{{ aiResult.candidateName }}</td>
+          <td>{{ skill.skill }}</td>
+          <td>{{ skill.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p><strong>Comments:</strong> {{ aiResult.comments }}</p>
+  </div>
+</div>

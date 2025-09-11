@@ -1,0 +1,19 @@
+<div class="container">
+  <h2>Sign Up</h2>
+  <form (ngSubmit)="signup()" #signupForm="ngForm">
+    <input type="text" placeholder="Username" [(ngModel)]="username" name="username" required />
+    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
+    <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required />
+    <select [(ngModel)]="role" name="role" required>
+      <option value="candidate">Candidate</option>
+      <option value="hr-admin">HR Admin</option>
+    </select>
+    <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
+  </form>
+
+  <p *ngIf="signupSuccessMessage" style="color:green">{{ signupSuccessMessage }}</p>
+  <p *ngIf="signupErrorMessage" style="color:red">{{ signupErrorMessage }}</p>
+
+  <p style="text-align:center; margin-top:12px;">Already have an account?</p>
+  <button type="button" routerLink="/login" class="secondary-btn">Login</button>
+</div>

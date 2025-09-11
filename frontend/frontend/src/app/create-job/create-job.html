@@ -1,0 +1,47 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h2>Manage Job Postings</h2>
+
+  <!-- Create New Job Posting -->
+  <section class="create-job-section">
+    <h3>Create New Job Posting</h3>
+    <form (ngSubmit)="addJob()" #jobForm="ngForm">
+      <input type="text" placeholder="Job Title" [(ngModel)]="newJob.title" name="title" required />
+      <input type="text" placeholder="Location" [(ngModel)]="newJob.location" name="location" />
+      <input type="number" placeholder="Experience (years)" [(ngModel)]="newJob.experience" name="experience" min="0" />
+      <textarea placeholder="Job Description" [(ngModel)]="newJob.description" name="description" required></textarea>
+      <input type="text" placeholder="Preferred Skills (comma separated)" [(ngModel)]="newJob.preferredSkillsStr" name="preferredSkills" />
+      <input type="text" placeholder="Education" [(ngModel)]="newJob.education" name="education" />
+      <button type="submit" [disabled]="jobForm.invalid">Add Job</button>
+    </form>
+  </section>
+
+  <!-- Existing Job Postings -->
+  <section class="existing-jobs-section" style="margin-top:18px;">
+    <h3>Existing Job Postings</h3>
+    <div *ngFor="let job of jobs" class="job-card" style="border:1px solid #eee; padding:12px; margin-bottom:10px;">
+      <div *ngIf="editingJobId !== job._id">
+        <h4>{{ job.title }} <small>({{ job.location }})</small></h4>
+        <p>{{ job.description }}</p>
+        <p><strong>Experience:</strong> {{ job.experience || 'N/A' }} yrs | <strong>Skills:</strong> {{ job.preferredSkills?.join(', ') }}</p>
+        <div class="actions">
+          <button (click)="editJob(job)">Edit</button>
+          <button (click)="confirmDelete(job._id)">Delete</button>
+        </div>
+      </div>
+
+      <div *ngIf="editingJobId === job._id">
+        <input [(ngModel)]="editedJob.title" />
+        <input [(ngModel)]="editedJob.location" />
+        <input type="number" [(ngModel)]="editedJob.experience" />
+        <textarea [(ngModel)]="editedJob.description"></textarea>
+        <input [(ngModel)]="editedJob.preferredSkillsStr" placeholder="comma separated" />
+        <div>
+          <button (click)="saveEdit(job)">Save</button>
+          <button (click)="cancelEdit()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

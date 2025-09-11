@@ -1,0 +1,295 @@
+/* CSS Variables */
+:root {
+    --mmc-blue-dark: #002147;
+    --mmc-blue: #0066cc;
+    --mmc-blue-hover: #004a99;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-shadow: rgba(0, 0, 0, 0.12);
+    --text-primary: #002147;
+    --text-secondary: #555;
+    --border-radius: 14px;
+    --spacing: 24px;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --transition-speed: 0.3s;
+  }
+   
+  /* Reset and Base Styles */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+   
+  body, input, button, select, textarea {
+    margin: 0;
+    font-family: var(--font-family);
+    font-size: 100%; /* 16px */
+    font-weight: 400; /* normal */
+    vertical-align: baseline;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: #f4f7fa;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+   
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family);
+    font-weight: 700;
+    color: var(--mmc-blue-dark);
+    margin: 0 0 0.5em 0;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+  }
+   
+  /* Navbar */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--mmc-blue-dark);
+    padding: 12px 32px;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.03em;
+   user-select: none;
+    z-index: 1000;
+    font-family: var(--font-family);
+    vertical-align: baseline;
+  }
+   
+  .nav-left button,
+  .nav-right button {
+    margin: 0 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--mmc-blue);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+    transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    font-family: var(--font-family);
+    vertical-align: baseline;
+  }
+   
+  .nav-left button:hover,
+  .nav-right button:hover,
+  .nav-left button:focus,
+  .nav-right button:focus {
+    background: var(--mmc-blue-hover);
+    box-shadow: 0 6px 12px rgba(0, 74, 153, 0.5);
+    outline: none;
+  }
+   
+  /* Focus outline for accessibility */
+  .nav-left button:focus,
+  .nav-right button:focus,
+  .dropdown button:focus,
+  .card:focus {
+    outline: 3px solid var(--mmc-blue-hover);
+    outline-offset: 3px;
+  }
+   
+  /* User Menu */
+  .user-menu {
+    position: relative;
+    display: inline-block;
+  }
+   
+  .user-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color var(--transition-speed) ease;
+  }
+   
+  .user-icon:hover,
+  .user-icon:focus {
+    border-color: var(--mmc-blue);
+    outline: none;
+  }
+   
+  .dropdown {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background: white;
+    color: var(--text-primary);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    padding: 16px 24px;
+    min-width: 220px;
+    font-size: 15px;
+    font-weight: 500;
+    z-index: 1100;
+    font-family: var(--font-family);
+    vertical-align: baseline;
+  }
+   
+  .dropdown p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+   
+  .dropdown button {
+    margin-top: 12px;
+    width: 100%;
+    padding: 10px;
+    background: var(--mmc-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(0, 102, 204, 0.35);
+    transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    font-family: var(--font-family);
+    vertical-align: baseline;
+  }
+   
+  .dropdown button:hover {
+    background: var(--mmc-blue-hover);
+    box-shadow: 0 6px 14px rgba(0, 74, 153, 0.5);
+  }
+   
+  /* Dashboard Content */
+  .dashboard-content {
+    padding: var(--spacing) 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: var(--font-family);
+    vertical-align: baseline;
+  }
+   
+  .dashboard-content h2 {
+    font-weight: 700;
+    font-size: 2.25rem;
+    margin-bottom: 8px;
+    color: var(--mmc-blue-dark);
+    letter-spacing: 0.02em;
+  }
+   
+  .dashboard-content p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+   
+  /* Cards Container */
+  .cards-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing);
+  }
+   
+  /* Responsive Grid */
+  @media (max-width: 1024px) {
+    .cards-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+   
+  @media (max-width: 600px) {
+    .cards-container {
+      grid-template-columns: 1fr;
+    }
+  }
+   
+  /* Card Styling */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 32px 24px;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    text-align: center;
+    transition:
+      transform var(--transition-speed) ease,
+      box-shadow var(--transition-speed) ease,
+      background var(--transition-speed) ease;
+    cursor: default;
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    animation: fadeInUp 0.5s ease forwards;
+    user-select: none;
+    font-family: var(--font-family);
+    vertical-align: baseline;
+  }
+   
+  .card:hover,
+  .card:focus {
+    transform: translateY(-8px);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.95);
+    outline: none;
+  }
+   
+  .card h3 {
+    font-size: 2.5rem;
+    color: var(--mmc-blue-dark);
+    margin: 16px 0 8px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+   
+  .card p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+   
+  /* Icon Styling */
+  .card i {
+    color: var(--mmc-blue);
+    margin-bottom: 16px;
+    transition: color var(--transition-speed) ease;
+  }
+   
+  .card:hover i,
+  .card:focus i {
+    color: var(--mmc-blue-hover);
+  }
+   
+  /* Fade-in animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+   
+  /* Logo Container */
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0 12px;
+    background-color: #fff; /* optional: white background */
+    user-select: none;
+  }
+   
+  .mmc-logo {
+    height: 60px; /* adjust as needed */
+    width: auto;
+    object-fit: contain;
+  }

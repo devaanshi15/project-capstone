@@ -1,0 +1,15 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h2>Job Descriptions</h2>
+
+  <div *ngFor="let job of jobs" style="border:1px solid #eee; padding:12px; margin-bottom:10px;">
+    <h4>{{ job.title }} <small>({{ job.location }})</small></h4>
+    <p>{{ job.description | slice:0:220 }}{{ job.description?.length > 220 ? '...' : '' }}</p>
+    <p><strong>Experience:</strong> {{ job.experience || 'N/A' }} yrs | <strong>Skills:</strong> {{ job.preferredSkills?.join(', ') }}</p>
+    <div style="margin-top:8px;">
+      <button (click)="viewFull(job)">Read full JD</button>
+      <button routerLink="/dashboard/resume-upload">Apply / Upload Resume</button>
+    </div>
+  </div>
+</div>
