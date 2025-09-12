@@ -11,7 +11,7 @@ import { CommonModule, NgIf } from '@angular/common';
   standalone: true,
   imports: [FormsModule, RouterLink, RouterModule, NgIf,CommonModule],
   templateUrl: './signup.html',
-  styleUrls: []
+  styleUrls: ['./signup.css']
 })
 export class Signup {
   username = '';
@@ -27,6 +27,32 @@ export class Signup {
   signup() {
     this.signupSuccessMessage = '';
     this.signupErrorMessage = '';
+  
+    // Username length validation
+    if (this.username.length < 5 || this.username.length > 9) {
+      alert('Invalid signup credentials');
+      this.signupErrorMessage = 'Invalid signup credentials';
+      return;
+    }
+  
+    // Email format validation: must be username@mmc.com
+    const emailPattern = new RegExp(`^${this.username}@mmc\\.com$`);
+    if (!emailPattern.test(this.email)) {
+      alert('Email must be in the format username@mmc.com');
+      this.signupErrorMessage = 'Invalid signup credentials';
+      return;
+    }
+  
+    // Password complexity validation
+    const hasLetter = /[a-zA-Z]/.test(this.password);
+    const hasNumber = /\d/.test(this.password);
+    if (!hasLetter || !hasNumber) {
+      alert('Password must contain both letters and numbers');
+      this.signupErrorMessage = 'Invalid signup credentials';
+      return;
+    }
+  
+    // Proceed with signup API call
     this.http.post<any>('http://localhost:5000/api/auth/signup', {
       username: this.username,
       email: this.email,
@@ -38,15 +64,17 @@ export class Signup {
         const token = res.token;
         try {
           const decoded: any = jwtDecode(token);
-          this.auth.setAuth(token, decoded.role || this.role);
+          this.auth.setAuth(res.token, res.role, res.username);
           setTimeout(() => this.router.navigate(['/dashboard']), 700);
         } catch (e) {
           this.signupErrorMessage = 'Could not parse signup token';
         }
       },
       error: (err) => {
+        alert('Invalid signup credentials');
         this.signupErrorMessage = err.error?.error || 'Signup failed. Please try again.';
       }
     });
   }
+  
 }

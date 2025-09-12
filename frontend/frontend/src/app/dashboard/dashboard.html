@@ -5,7 +5,9 @@
 
   <!-- HR Admin View -->
   <div *ngIf="role === 'hr-admin'">
-    <p>Welcome, HR Admin! Here are quick stats:</p>
+    <p>Welcome, {{ usernameDisplay }} HR Admin! Here are quick stats:</p>
+
+    <p>Role : HR admin</p>
 
     <div class="cards-container" style="display:flex; gap:12px; flex-wrap:wrap;">
       <div class="card" style="padding:12px; min-width:160px;">
@@ -29,16 +31,19 @@
     <!-- placeholder for charts -->
     <section style="margin-top:18px;">
       <h4>Interactive charts (placeholder)</h4>
-      <p>You can plug-in chart library (Chart.js/ng2-charts) here later to show skills distribution, resumes per job, etc.</p>
+      <p>You can plug-in chart library (Chart.js/ng2-charts) here later to show skills distribution, resumes per job,
+        etc.</p>
     </section>
   </div>
 
   <!-- Candidate View -->
   <div *ngIf="role === 'candidate'">
     <h3>Welcome, {{ usernameDisplay }} — good luck!</h3>
+    <p>Role : Candidate</p>
     <p>Explore job descriptions and upload your resume for positions you like.</p>
     <div style="margin-top:12px;">
       <button routerLink="/dashboard/job-descriptions">View Job Descriptions</button>
     </div>
   </div>
+
 </div>

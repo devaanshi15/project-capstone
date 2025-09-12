@@ -21,10 +21,11 @@ router.post("/signup", async (req, res) => {
     await user.save();
 
     const token = jwt.sign(
-      { user: { id: user._id, role: user.role } },
+      { user: { id: user._id, role: user.role, username: user.username } },
       jwtSecret,
       { expiresIn: "1d" }
     );
+    
 
     res.json({
       message: "User registered successfully",
@@ -49,10 +50,11 @@ router.post("/login", async (req, res) => {
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
     const token = jwt.sign(
-      { user: { id: user._id, role: user.role } },
+      { user: { id: user._id, role: user.role, username: user.username } },
       jwtSecret,
       { expiresIn: "1d" }
     );
+    
 
     res.json({ token, role: user.role, username: user.username });
   } catch (err) {

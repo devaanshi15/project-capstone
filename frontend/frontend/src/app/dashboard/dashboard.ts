@@ -9,8 +9,8 @@ import { AuthService } from '../services/auth.service';
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, NavbarComponent],
-  templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+  templateUrl: './dashboard.html',  // will use old HTML here
+  styleUrls: ['./dashboard.css']    // will use old CSS here
 })
 export class Dashboard implements OnInit {
   role: string | null = null;
@@ -26,18 +26,12 @@ export class Dashboard implements OnInit {
 
   ngOnInit() {
     this.role = this.auth.getRole();
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        this.usernameDisplay = payload?.username || 'User';
-      } catch (e) {}
-    }
-
+    const username = this.auth.getUsername();
+    this.usernameDisplay = username || 'User';
+  
     if (this.role === 'hr-admin') {
       this.dashboardService.getStats().subscribe({
         next: (data) => {
-          // backend returns jobs, but we will try to map safe defaults
           this.stats.jobs = data.jobs || 0;
           this.stats.resumes = data.resumes || 0;
           this.stats.candidates = data.candidates || 0;
