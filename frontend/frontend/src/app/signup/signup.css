@@ -41,7 +41,7 @@ button:hover {
     background-color: #001060;
 }
  
-/* Secondary button style */
+
 .secondary-btn {
     background: transparent;
     color: #00008b;
@@ -61,7 +61,7 @@ button:hover {
     color: #fff;
 }
  
-/* Success and Error Messages */
+
 .success-message {
     color: green;
     font-weight: bold;
@@ -88,13 +88,12 @@ select {
     font-size: 16px;
     box-sizing: border-box;
     appearance: none;
-    /* Remove default arrow for better styling */
     background: white url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='7' viewBox='0 0 10 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2300008B' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;
     background-size: 10px 7px;
     cursor: pointer;
 }
  
-/* button {
+button {
     background-color: #00008b;
     color: #fff;
     border: none;
@@ -108,5 +107,48 @@ select {
  
 button:hover {
     background-color: #001060;
-} */
+} 
  
+
+.signup-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 900px;
+  margin: 60px auto;
+}
+
+.form-section,
+.rules-section {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #00008b;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 139, 0.2);
+}
+
+.rules-section h3 {
+  color: #00008b;
+  margin-bottom: 12px;
+}
+
+.rules-section ul {
+  list-style: none;
+  padding-left: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.rules-section li {
+  margin-bottom: 8px;
+}
+
+.rules-section code {
+  background: #f0f0ff;
+  color: #00008b;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}

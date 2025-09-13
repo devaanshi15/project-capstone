@@ -1,23 +1,3 @@
-// import { Injectable } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-
-// @Injectable({ providedIn: 'root' })
-// export class DashboardService {
-//   private apiUrl = 'http://localhost:5000/api/dashboard';
-
-//   constructor(private http: HttpClient) {}
-
-//   getStats() {
-//     return this.http.get<{
-//       jobs: number;
-//       resumes: number;
-//       candidates: number;
-//       candidatesApplied: number;
-//     }>(`${this.apiUrl}/stats`);
-//   }
-// }
-
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth.service';

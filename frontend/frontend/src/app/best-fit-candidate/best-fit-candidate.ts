@@ -8,7 +8,7 @@ import { RouterLink, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-best-fit-candidate',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FormsModule, RouterLink, RouterModule],
+  imports: [CommonModule, NavbarComponent, FormsModule, RouterModule],
   templateUrl: './best-fit-candidate.html',
   styleUrls: ['./best-fit-candidate.css']
 })
