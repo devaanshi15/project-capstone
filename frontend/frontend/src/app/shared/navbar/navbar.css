@@ -21,6 +21,26 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+
+.mercer-logo {
+    width: 150px;  /* or any visible size */
+    height: auto;
+    display: block;
+    filter: brightness(0) invert(1); /* ensures logo is white on black */
+  transition: filter 0.3s ease;
+
+  }
+  .logo-container {
+   
+    display: flex;
+   
+    align-items: center;
+   
+    padding: 9px;
+    /* min-height: 1px;  */
+   
+  }
  
 .nav-left,
 .nav-right {

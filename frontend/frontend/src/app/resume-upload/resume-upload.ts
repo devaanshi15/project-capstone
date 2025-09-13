@@ -1,85 +1,134 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpEventType } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { NavbarComponent } from '../shared/navbar/navbar';
-import { ResumeService } from '../services/resume.service';
-import { JobService } from '../services/job.service';
 import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from '../shared/navbar/navbar';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-resume-upload',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarComponent, RouterModule],
   templateUrl: './resume-upload.html',
-  styleUrls: []
+  styleUrls: ['./resume-upload.css']
 })
 export class ResumeUpload implements OnInit {
-  selectedFile: File | null = null;
-  isDragOver = false;
-  uploadedResumeId: string | null = null;
-  aiResult: any = null;
-  jobs: any[] = [];
   candidateName = '';
-  selectedJobId: string | null = null;
+  jobs: any[] = [];
+  selectedJobId: string = '';
+  selectedJob: any = null;
+  selectedFile: File | null = null;
+  isHrAdmin = false;
+  uploadMessage = '';
+  submitMessage = '';
 
-  constructor(private resumeService: ResumeService, private jobService: JobService) {}
+  private apiUrl = 'http://localhost:5000/api';
+
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    this.jobService.list().subscribe(j => this.jobs = j || []);
+    this.isHrAdmin = this.auth.getRole() === 'hr-admin';
+    this.loadJobs();
+
+    if (!this.isHrAdmin) {
+      const username = this.auth.getUsername();
+      if (username) this.candidateName = username;
+    }
+
+    this.route.queryParams.subscribe(params => {
+      const jobId = params['jobId'];
+      if (jobId) {
+        this.selectedJobId = jobId;
+        // If jobs already loaded, set selectedJob
+        if (this.jobs.length > 0) {
+          this.selectedJob = this.jobs.find(j => j._id === jobId) || null;
+        }
+      }
+    });
   }
 
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    this.isDragOver = true;
+  loadJobs() {
+    const headers = this.getAuthHeaders();
+    this.http.get<any[]>(`${this.apiUrl}/resumes/jobs`, { headers }).subscribe({
+      next: (data) => {
+        this.jobs = data || [];
+        if (this.selectedJobId) {
+          this.selectedJob = this.jobs.find(j => j._id === this.selectedJobId) || null;
+        }
+      },
+      error: () => alert('Failed to load jobs')
+    });
   }
 
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-    this.isDragOver = false;
+  onJobChange() {
+    this.selectedJob = this.jobs.find(j => j._id === this.selectedJobId) || null;
   }
 
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    this.isDragOver = false;
-    if (event.dataTransfer?.files.length) {
-      this.selectedFile = event.dataTransfer.files[0];
+  viewJD() {
+    if (this.selectedJob) {
+      alert(`Title: ${this.selectedJob.title}\n\nPlease navigate to Job Descriptions page to read full details.`);
     }
   }
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.selectedFile = input.files[0];
+  onFileSelected(event: any) {
+    if (event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
     }
+  }
+
+  getAuthHeaders() {
+    const token = this.auth.getToken();
+    return {
+      Authorization: `Bearer ${token}`
+    };
+  }
+
+  canUpload() {
+    return this.candidateName.trim() !== '' && this.selectedJobId !== '' && this.selectedFile !== null;
+  }
+
+  canSubmit() {
+    return this.candidateName.trim() !== '' && this.selectedJobId !== '' && this.selectedFile !== null;
   }
 
   uploadResume() {
-    if (!this.selectedFile) return;
+    if (!this.canUpload()) {
+      alert('Please fill all fields and select a file.');
+      return;
+    }
     const formData = new FormData();
-    formData.append('resume', this.selectedFile);
-    formData.append('candidateName', this.candidateName || '');
-    if (this.selectedJobId) formData.append('jobId', this.selectedJobId);
+    formData.append('candidateName', this.candidateName);
+    formData.append('jobId', this.selectedJobId);
+    if (this.selectedFile) {
+      formData.append('resume', this.selectedFile);
+    }
 
-    this.resumeService.upload(formData).subscribe({
-      next: (event) => {
-        if (event.type === HttpEventType.Response) {
-          alert('Resume uploaded successfully');
-          this.uploadedResumeId = event.body.resume._id;
-          this.aiResult = null;
-        }
+    const headers = new HttpHeaders(this.getAuthHeaders());
+
+    this.http.post(`${this.apiUrl}/resumes/upload`, formData, { headers }).subscribe({
+      next: (res: any) => {
+        this.uploadMessage = res.msg || 'Uploaded successfully';
+        this.selectedFile = null;
       },
-      error: () => alert('Upload failed')
+      error: (err) => {
+        alert('Upload failed: ' + (err.error?.msg || 'Server error'));
+      }
     });
   }
 
-  getAiScore() {
-    if (!this.uploadedResumeId) return;
-    this.resumeService.getAiScore(this.uploadedResumeId).subscribe({
-      next: (res) => {
-        // backend returns { result: updatedResume } - adjust if backend format differs
-        this.aiResult = res.result || res;
-      },
-      error: () => alert('AI scoring failed')
-    });
+  onSubmit() {
+    this.uploadResume();
+    this.submitMessage = 'Resume submitted successfully';
+  }
+
+  onAiButtonClick() {
+    alert('AI Button clicked - functionality to be implemented.');
   }
 }
+

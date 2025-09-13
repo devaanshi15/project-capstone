@@ -10,7 +10,7 @@ import { RouterLink, RouterModule } from '@angular/router';
   standalone: true,
   imports: [FormsModule, CommonModule, RouterModule, NavbarComponent],
   templateUrl: './create-job.html',
-  styleUrls: []
+  styleUrls: ['./create-job.css']
 })
 export class CreateJob implements OnInit {
   jobs: any[] = [];
@@ -96,3 +96,4 @@ export class CreateJob implements OnInit {
     this.editingJobId = null;
   }
 }
+

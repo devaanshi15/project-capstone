@@ -1,16 +1,43 @@
+// import { Injectable } from '@angular/core';
+// import { HttpClient } from '@angular/common/http';
+
+// @Injectable({ providedIn: 'root' })
+// export class DashboardService {
+//   private apiUrl = 'http://localhost:5000/api/dashboard';
+
+//   constructor(private http: HttpClient) {}
+
+//   getStats() {
+//     return this.http.get<{
+//       jobs: number;
+//       resumes: number;
+//       candidates: number;
+//       candidatesApplied: number;
+//     }>(`${this.apiUrl}/stats`);
+//   }
+// }
+
+
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from './auth.service';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class DashboardService {
-    private apiUrl = 'http://localhost:5000/api/dashboard';
+  private apiUrl = 'http://localhost:5000/api/dashboard';
 
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
-    getStats(): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/stats`);
-    }
+  getStats() {
+    const token = this.auth.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token || ''}`
+    });
+    return this.http.get<{
+      jobs: number;
+      resumes: number;
+      candidates: number;
+      candidatesApplied: number;
+    }>(`${this.apiUrl}/stats`, { headers });
+  }
 }

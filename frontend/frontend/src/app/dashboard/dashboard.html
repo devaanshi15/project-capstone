@@ -1,12 +1,12 @@
+<!-- 
 <app-navbar></app-navbar>
 
 <div class="container" role="main" aria-label="Dashboard">
   <h2>Dashboard</h2>
 
-  <!-- HR Admin View -->
+ 
   <div *ngIf="role === 'hr-admin'">
     <p>Welcome, {{ usernameDisplay }} HR Admin! Here are quick stats:</p>
-
     <p>Role : HR admin</p>
 
     <div class="cards-container" style="display:flex; gap:12px; flex-wrap:wrap;">
@@ -20,15 +20,65 @@
       </div>
       <div class="card" style="padding:12px; min-width:160px;">
         <h3>{{ stats.candidates }}</h3>
-        <p>Candidates Processed</p>
+        <p>Candidate Users Registered</p>
       </div>
       <div class="card" style="padding:12px; min-width:160px;">
-        <h3>{{ stats.jobcodeWise }}</h3>
-        <p>Jobcode-wise Resumes</p>
+        <h3>{{ stats.candidatesApplied }}</h3>
+        <p>Candidates Applied</p>
       </div>
     </div>
 
-    <!-- placeholder for charts -->
+    
+    <section style="margin-top:18px;">
+      <h4>Interactive charts (placeholder)</h4>
+      <p>You can plug-in chart library (Chart.js/ng2-charts) here later to show skills distribution, resumes per job,
+        etc.</p>
+    </section>
+  </div>
+
+ 
+  <div *ngIf="role === 'candidate'">
+    <h3>Welcome, {{ usernameDisplay }} — good luck!</h3>
+    <p>Role : Candidate</p>
+    <p>Explore job descriptions and upload your resume for positions you like.</p>
+  </div>
+
+
+  <div *ngIf="!role">
+    <p>Please <a routerLink="/login">login</a> to access the dashboard.</p>
+  </div>
+</div> -->
+
+
+<app-navbar></app-navbar>
+
+<div class="container" role="main" aria-label="Dashboard">
+  <h2>Dashboard</h2>
+
+  <!-- HR Admin View -->
+  <div *ngIf="role === 'hr-admin'">
+    <p>Welcome, {{ usernameDisplay }} HR Admin! Here are quick stats:</p>
+    <p>Role : HR admin</p>
+
+    <div class="cards-container" style="display:flex; gap:12px; flex-wrap:wrap;">
+      <div class="card" style="padding:12px; min-width:160px;">
+        <h3>{{ stats.jobs }}</h3>
+        <p>Job Descriptions Created</p>
+      </div>
+      <div class="card" style="padding:12px; min-width:160px;">
+        <h3>{{ stats.resumes }}</h3>
+        <p>Resumes Uploaded</p>
+      </div>
+      <div class="card" style="padding:12px; min-width:160px;">
+        <h3>{{ stats.candidates }}</h3>
+        <p>Candidate Users Registered</p>
+      </div>
+      <div class="card" style="padding:12px; min-width:160px;">
+        <h3>{{ stats.candidatesApplied }}</h3>
+        <p>Candidates Applied</p>
+      </div>
+    </div>
+
     <section style="margin-top:18px;">
       <h4>Interactive charts (placeholder)</h4>
       <p>You can plug-in chart library (Chart.js/ng2-charts) here later to show skills distribution, resumes per job,
@@ -41,9 +91,10 @@
     <h3>Welcome, {{ usernameDisplay }} — good luck!</h3>
     <p>Role : Candidate</p>
     <p>Explore job descriptions and upload your resume for positions you like.</p>
-    <div style="margin-top:12px;">
-      <button routerLink="/dashboard/job-descriptions">View Job Descriptions</button>
-    </div>
   </div>
 
+  <!-- Fallback if no role -->
+  <div *ngIf="!role">
+    <p>Please <a routerLink="/login">login</a> to access the dashboard.</p>
+  </div>
 </div>

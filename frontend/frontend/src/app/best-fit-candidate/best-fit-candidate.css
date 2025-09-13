@@ -1,0 +1,132 @@
+/* Container styling */
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 24px 32px;
+    background-color: #fff;
+    border: 1px solid #00008b;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 139, 0.15);
+    font-family: Arial, sans-serif;
+    color: #000;
+  }
+ 
+  /* Heading */
+  h1, h2, h3, h4, h5, h6 {
+    color: #00008b;
+    margin-bottom: 24px;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+  }
+ 
+  /* Form container */
+  .form-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+ 
+  /* Select dropdown */
+  select {
+    flex: 1 1 220px;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #00008b;
+    border-radius: 5px;
+    box-sizing: border-box;
+    cursor: pointer;
+    background-color: #fff;
+    color: #000;
+    transition: border-color 0.3s ease;
+  }
+ 
+  select:hover,
+  select:focus {
+    border-color: #001060;
+    outline: none;
+    box-shadow: 0 0 6px rgba(0, 0, 139, 0.3);
+  }
+ 
+  /* Input number */
+  input[type="number"] {
+    width: 140px;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #00008b;
+    border-radius: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    transition: border-color 0.3s ease;
+  }
+ 
+  input[type="number"]:hover,
+  input[type="number"]:focus {
+    border-color: #001060;
+    outline: none;
+    box-shadow: 0 0 6px rgba(0, 0, 139, 0.3);
+  }
+ 
+  /* Button */
+  button {
+    background-color: #00008b;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+  }
+ 
+  button:hover {
+    background-color: #001060;
+  }
+ 
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+ 
+  thead th {
+    background-color: #00008b;
+    color: #fff;
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 2px solid #001060;
+  }
+ 
+  tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+  }
+ 
+  tbody tr:hover {
+    background-color: #f0f4ff;
+  }
+ 
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .form-controls {
+      flex-direction: column;
+      gap: 16px;
+    }
+ 
+    select,
+    input[type="number"],
+    button {
+      width: 100%;
+      flex: none;
+    }
+  }
+ 
+ 

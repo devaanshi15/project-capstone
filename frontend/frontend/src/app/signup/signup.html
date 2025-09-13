@@ -10,10 +10,12 @@
     </select>
     <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
   </form>
-
+ 
   <p *ngIf="signupSuccessMessage" style="color:green">{{ signupSuccessMessage }}</p>
   <p *ngIf="signupErrorMessage" style="color:red">{{ signupErrorMessage }}</p>
-
+ 
   <p style="text-align:center; margin-top:12px;">Already have an account?</p>
   <button type="button" routerLink="/login" class="secondary-btn">Login</button>
 </div>
+ 
+ 

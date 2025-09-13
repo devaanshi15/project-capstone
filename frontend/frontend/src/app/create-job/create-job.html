@@ -3,7 +3,7 @@
 <div class="container">
   <h2>Manage Job Postings</h2>
 
-  <!-- Create New Job Posting -->
+  
   <section class="create-job-section">
     <h3>Create New Job Posting</h3>
     <form (ngSubmit)="addJob()" #jobForm="ngForm">
@@ -17,7 +17,7 @@
     </form>
   </section>
 
-  <!-- Existing Job Postings -->
+
   <section class="existing-jobs-section" style="margin-top:18px;">
     <h3>Existing Job Postings</h3>
     <div *ngFor="let job of jobs" class="job-card" style="border:1px solid #eee; padding:12px; margin-bottom:10px;">
@@ -44,4 +44,7 @@
       </div>
     </div>
   </section>
-</div>
+</div> 
+
+
+ 

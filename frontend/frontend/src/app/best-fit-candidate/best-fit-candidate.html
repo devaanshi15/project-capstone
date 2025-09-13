@@ -1,21 +1,22 @@
 <app-navbar></app-navbar>
-
+ 
 <div class="container">
   <h2>Best Fit Candidate</h2>
-
-  <div style="display:flex; gap:12px; align-items:center;">
-    <select [(ngModel)]="selectedJobId">
+ 
+  <div class="form-controls">
+    <select [(ngModel)]="selectedJobId" required>
       <option value="">Select job</option>
       <option *ngFor="let j of jobs" [value]="j._id">{{ j.title }}</option>
     </select>
-
-    <a *ngIf="selectedJobId" [routerLink]="['/dashboard/create-job']" style="margin-left:8px;">View selected JD</a>
-
-    <input type="number" [(ngModel)]="topN" min="1" placeholder="How many candidates?" style="width:140px;" />
-
+   
+   
+ 
+    <input type="number" [(ngModel)]="topN" min="1" placeholder="How many candidates?" />
+ 
     <button (click)="fetchTop()">Top {{ topN || 5 }} candidates</button>
   </div>
-
+ 
+ 
   <div *ngIf="candidates?.length" style="margin-top:16px;">
     <h4>Top candidates for selected job</h4>
     <table style="width:100%; border-collapse:collapse;">
@@ -35,7 +36,7 @@
           <td>{{ c.experience || 'N/A' }}</td>
           <!-- <td>{{ c.skills?.map(s=>s.skill).join(', ') }}</td> -->
           <td>{{ getSkillsAsString(c) }}</td>
-
+ 
           <td>{{ c.relevance }}</td>
           <td>{{ c.comments }}</td>
           <td><a [href]="c.resumeLink" target="_blank">Open</a></td>
@@ -44,3 +45,5 @@
     </table>
   </div>
 </div>
+ 
+ 

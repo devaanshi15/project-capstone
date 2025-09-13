@@ -7,13 +7,13 @@
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 139, 0.2);
 }
-
+ 
 h2 {
     color: #00008b;
     text-align: center;
     margin-bottom: 20px;
 }
-
+ 
 input {
     width: 100%;
     padding: 12px;
@@ -22,7 +22,7 @@ input {
     border-radius: 5px;
     font-size: 14px;
 }
-
+ 
 button {
     background-color: #00008b;
     color: #fff;
@@ -36,11 +36,11 @@ button {
     font-size: 15px;
     transition: background-color 0.3s ease;
 }
-
+ 
 button:hover {
     background-color: #001060;
 }
-
+ 
 /* Secondary button style */
 .secondary-btn {
     background: transparent;
@@ -55,12 +55,12 @@ button:hover {
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
-
+ 
 .secondary-btn:hover {
     background-color: #00008b;
     color: #fff;
 }
-
+ 
 /* Success and Error Messages */
 .success-message {
     color: green;
@@ -69,7 +69,7 @@ button:hover {
     text-align: center;
     font-size: 14px;
 }
-
+ 
 .error-message {
     color: red;
     font-weight: bold;
@@ -77,8 +77,8 @@ button:hover {
     text-align: center;
     font-size: 14px;
 }
-
-
+ 
+ 
 select {
     width: 100%;
     padding: 12px;
@@ -93,7 +93,7 @@ select {
     background-size: 10px 7px;
     cursor: pointer;
 }
-
+ 
 /* button {
     background-color: #00008b;
     color: #fff;
@@ -105,7 +105,8 @@ select {
     cursor: pointer;
     font-weight: bold;
 }
-
+ 
 button:hover {
     background-color: #001060;
 } */
+ 
