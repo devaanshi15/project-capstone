@@ -1,12 +1,3 @@
-there's some problem coming with login so need to fix it. please help. it's not logging in with the right credentials a
-
-
-username -> also include numbers
-in login page, drop down box fix
-
-
-nav bar 
-- user icon, below it write username and below it role: user role 
 
 
 Resume upload of hr -> ai button functionality
