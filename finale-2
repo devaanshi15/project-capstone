@@ -1,0 +1,616 @@
+//frontend\frontend\src\app\resume-upload\resume-upload.ts
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from '../shared/navbar/navbar';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-resume-upload',
+  standalone: true,
+  imports: [CommonModule, FormsModule, NavbarComponent, RouterModule],
+  templateUrl: './resume-upload.html',
+  styleUrls: ['./resume-upload.css']
+})
+export class ResumeUpload implements OnInit {
+  candidateName = '';
+  jobs: any[] = [];
+  selectedJobId: string = '';
+  selectedJob: any = null;
+  selectedFile: File | null = null;
+  isDragOver: boolean = false;
+  isHrAdmin = false;
+  uploadMessage = '';
+  submitMessage = '';
+  aiResults: any | null = null;
+  loadingAi = false;
+  errorAi = '';
+
+
+  private apiUrl = 'http://localhost:5000/api';
+
+  uploadedResumeId: string | null = null;
+
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
+
+  ngOnInit() {
+    this.isHrAdmin = this.auth.getRole() === 'hr-admin';
+    this.loadJobs();
+
+    if (!this.isHrAdmin) {
+      const username = this.auth.getUsername();
+      if (username) this.candidateName = username;
+    }
+
+    this.route.queryParams.subscribe(params => {
+      const jobId = params['jobId'];
+      if (jobId) {
+        this.selectedJobId = jobId;
+        if (this.jobs.length > 0) {
+          this.selectedJob = this.jobs.find(j => j._id === jobId) || null;
+        }
+      }
+    });
+  }
+
+  loadJobs() {
+    const headers = this.getAuthHeaders();
+    this.http.get<any[]>(`${this.apiUrl}/resumes/jobs`, { headers }).subscribe({
+      next: (data) => {
+        this.jobs = data || [];
+        if (this.selectedJobId) {
+          this.selectedJob = this.jobs.find(j => j._id === this.selectedJobId) || null;
+        }
+      },
+      error: () => alert('Failed to load jobs')
+    });
+  }
+
+  onJobChange() {
+    this.selectedJob = this.jobs.find(j => j._id === this.selectedJobId) || null;
+  }
+
+  viewJD() {
+    if (this.selectedJob) {
+      alert(`Title: ${this.selectedJob.title}\n\nPlease navigate to Job Descriptions page to read full details.`);
+    }
+  }
+
+  onFileSelected(event: any) {
+    if (event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
+    }
+  }
+
+  getAuthHeaders() {
+    const token = this.auth.getToken();
+    return {
+      Authorization: `Bearer ${token || ''}`
+    };
+  }
+
+  canUpload() {
+    return this.candidateName.trim() !== '' && this.selectedJobId !== '' && this.selectedFile !== null;
+  }
+
+  canSubmit() {
+    return this.candidateName.trim() !== '' && this.selectedJobId !== '' && this.selectedFile !== null;
+  }
+
+  uploadResume() {
+    if (!this.canUpload()) {
+      alert('Please fill all fields and select a file.');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('candidateName', this.candidateName);
+    formData.append('jobId', this.selectedJobId);
+    if (this.selectedFile) {
+      formData.append('resume', this.selectedFile);
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.auth.getToken() || ''}`
+    });
+
+    this.http.post(`${this.apiUrl}/resumes/upload`, formData, { headers }).subscribe({
+      next: (res: any) => {
+        this.uploadMessage = res.msg || 'Uploaded successfully';
+        this.selectedFile = null;
+        if (res._id) {
+          this.uploadedResumeId = res._id;
+          console.log('Uploaded resume ID:', res._id);
+        }
+      },
+      error: (err) => {
+        alert('Upload failed: ' + (err.error?.msg || 'Server error'));
+      }
+    });
+  }
+
+  async analyzeResume() {
+    if (!this.uploadedResumeId) {
+      alert('Please upload the resume first.');
+      return;
+    }
+
+    this.loadingAi = true;
+    this.errorAi = '';
+    this.aiResults = null;
+
+    try {
+      const headers = new HttpHeaders(this.getAuthHeaders());
+      const result = await this.http.post<any>(
+        `${this.apiUrl}/ai/analyze-resume`,
+        { resumeId: this.uploadedResumeId },
+        { headers }
+      ).toPromise();
+
+      this.aiResults = [result];
+    } catch (err: any) {
+      this.errorAi = err.error?.error || 'Failed to analyze resume';
+    } finally {
+      this.loadingAi = false;
+    }
+  }
+
+  onSubmit() {
+    this.uploadResume();
+    this.submitMessage = 'Resume submitted successfully';
+  }
+
+  exportReport(resumeId: string) {
+    const headers = new HttpHeaders(this.getAuthHeaders());
+    const url = `${this.apiUrl}/bestfit/report/${resumeId}`;
+    this.http.get(url, { headers, responseType: 'blob' }).subscribe(blob => {
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = `resume_report_${resumeId}.pdf`;
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    }, err => {
+      alert('Failed to download report');
+    });
+  }
+
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+    if (event.dataTransfer?.files?.length) {
+      this.onFileSelected({ target: { files: event.dataTransfer.files } } as any);
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+//frontend\frontend\src\app\resume-upload\resume-upload.css
+/* General Container */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 24px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+}
+
+/* Page Heading */
+h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #003366;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #005a8c;
+  padding-bottom: 8px;
+}
+
+/* Form */
+form {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 18px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  font-weight: 500;
+  color: #003366;
+}
+
+input[type="text"],
+select,
+input[type="file"] {
+  margin-top: 6px;
+  padding: 12px 14px;
+  border: 1px solid #ccd6e0;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+select:focus,
+input[type="file"]:focus {
+  border-color: #005a8c;
+  box-shadow: 0 0 5px rgba(0, 90, 140, 0.3);
+  outline: none;
+}
+
+/* Links */
+a {
+  color: #005a8c;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #0077b6;
+  text-decoration: underline;
+}
+
+/* Buttons */
+button {
+  background: linear-gradient(135deg, #005a8c, #0077b6);
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #0077b6, #0096c7);
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  background: #a6c8e0;
+  cursor: not-allowed;
+}
+
+/* Messages */
+p {
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+p[style*="color: green"] {
+  color: #0f5132 !important;
+  background: #e6f9f0;
+  border: 1px solid #badbcc;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+p[style*="color: red"] {
+  color: #842029 !important;
+  background: #fde2e2;
+  border: 1px solid #f5c2c7;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+/* Candidate Summary Card */
+.candidate-summary-card {
+  margin-top: 30px;
+}
+
+.candidate-summary-card h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #005a8c;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background: #ffffff;
+  border: 1px solid #e1eaf4;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.summary-details p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.export-button-container button {
+  background: linear-gradient(135deg, #0096c7, #00b4d8);
+}
+
+.export-button-container button:hover {
+  background: linear-gradient(135deg, #00b4d8, #48cae4);
+}
+
+
+/* Drag & Drop Upload Box */
+.upload-box {
+  border: 2px dashed #0077b6;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  background-color: #f9fafb;
+  color: #555;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.upload-box:hover {
+  background-color: #eef6fb;
+  border-color: #0096c7;
+}
+
+.upload-box.dragover {
+  background-color: #dff6ff;
+  border-color: #005a8c;
+}
+
+.upload-box i {
+  font-size: 40px;
+  color: #0077b6;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.upload-box span {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #777;
+  font-style: italic;
+}
+
+.upload-box input[type="file"] {
+  display: none; /* Hide the actual file input */
+}
+
+
+
+/* Container Styling */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+}
+
+h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #003366;
+  margin-bottom: 20px;
+}
+
+/* Upload Box Styling */
+.upload-box {
+  border: 2px dashed #0077b6;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  background-color: #f9fafb;
+  color: #555;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.upload-box:hover {
+  background-color: #eef6fb;
+  border-color: #0096c7;
+  transform: translateY(-2px);
+}
+
+.upload-box.dragover {
+  background-color: #dff6ff;
+  border-color: #005a8c;
+}
+
+.upload-box i {
+  font-size: 40px;
+  color: #0077b6;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.upload-box span {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #777;
+  font-style: italic;
+}
+
+.upload-box input[type="file"] {
+  display: none; /* Hide real input */
+}
+
+/* Candidate Summary Card */
+.candidate-summary-card {
+  background: #ffffff;
+  border: 1px solid #e1eaf4;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+}
+
+.summary-card {
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid #dfe7f1;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.summary-details p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.export-button-container {
+  margin-top: 12px;
+}
+
+
+
+
+
+
+
+
+//frontend\frontend\src\app\resume-upload\resume-upload.html
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h2>Resume Upload</h2>
+
+  <form (ngSubmit)="onSubmit()" #resumeForm="ngForm" enctype="multipart/form-data" novalidate>
+    <!-- Candidate Name -->
+    <label>
+      Candidate Name:
+      <input
+        type="text"
+        name="candidateName"
+        [(ngModel)]="candidateName"
+        [readonly]="!isHrAdmin"
+        required
+      />
+    </label>
+
+    <!-- Select Job -->
+    <label>
+      Select Job Description:
+      <select
+        name="jobId"
+        [(ngModel)]="selectedJobId"
+        (change)="onJobChange()"
+        required
+      >
+        <option value="" disabled>Select a job</option>
+        <option *ngFor="let job of jobs" [value]="job._id">{{ job.title }}</option>
+      </select>
+    </label>
+
+    <!-- JD Link -->
+    <div *ngIf="selectedJob" style="margin-bottom: 1rem;">
+      <a (click)="viewJD()" style="text-decoration: underline; cursor: pointer;">
+        Read full JD: {{ selectedJob.title }}
+      </a>
+    </div>
+
+    <!-- Drag & Drop Resume Upload -->
+    <div
+      class="upload-box"
+      (click)="fileInput.click()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      [class.dragover]="isDragOver"
+    >
+      <i class="fas fa-cloud-upload-alt"></i>
+      <strong>Drag & drop your resume here</strong>
+      <span>or click to browse (PDF only)</span>
+      <input
+        type="file"
+        #fileInput
+        (change)="onFileSelected($event)"
+        accept=".pdf"
+      />
+    </div>
+
+    <!-- HR Admin Actions -->
+    <div *ngIf="isHrAdmin" style="margin-top: 1rem;">
+      <button type="button" (click)="uploadResume()" [disabled]="!canUpload()" style="margin-right: 1rem;">
+        Upload
+      </button>
+
+      <button type="button" (click)="analyzeResume()" [disabled]="!uploadedResumeId || loadingAi">
+        {{ loadingAi ? 'Analyzing...' : 'AI Analyze' }}
+      </button>
+
+      <p *ngIf="uploadMessage" style="color: green; margin-top: 0.5rem;">
+        {{ uploadMessage }}
+      </p>
+      <p *ngIf="errorAi" style="color: red; margin-top: 0.5rem;">
+        {{ errorAi }}
+      </p>
+    </div>
+
+    <!-- Candidate Actions -->
+    <div *ngIf="!isHrAdmin" style="margin-top: 1rem;">
+      <button type="submit" [disabled]="!canSubmit()">Submit</button>
+      <p *ngIf="submitMessage" style="color: green; margin-top: 0.5rem;">
+        {{ submitMessage }}
+      </p>
+    </div>
+  </form>
+
+  <!-- AI Candidate Summary Card -->
+  <div *ngIf="aiResults?.length" class="candidate-summary-card" style="margin-top: 2rem;">
+    <h3>AI Resume Analysis Results</h3>
+    <div *ngFor="let r of aiResults" class="summary-card">
+      <div class="summary-details">
+        <p><strong>Candidate Name:</strong> {{ r.candidateName }}</p>
+        <p><strong>Experience:</strong> {{ r.experience }}</p>
+        <p><strong>Skills:</strong> {{ r.skills?.join(', ') }}</p>
+        <p><strong>Relevance Score:</strong> {{ r.relevanceScore }}</p>
+        <p><strong>Comments/Review:</strong> {{ r.comments }}</p>
+        <p><strong>Resume Link:</strong>
+          <a [href]="r.resumeUrl" target="_blank" rel="noopener noreferrer">View Resume</a>
+        </p>
+      </div>
+      <div class="export-button-container">
+        <button (click)="exportReport(r.resumeId)">Export PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
